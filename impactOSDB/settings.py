@@ -39,9 +39,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "emissiondatabase.apps.EmissiondatabaseConfig",# new app
     #DRF
-    "rest_framework"
+    "rest_framework", 
+    "django_filters", #filter
+    "drf_yasg",
 ]
-
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -70,6 +71,8 @@ TEMPLATES = [
         },
     },
 ]
+
+
 
 WSGI_APPLICATION = "impactOSDB.wsgi.application"
 

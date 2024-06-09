@@ -1,18 +1,18 @@
 from django.db import models
 
-class  Contributor(models.Model):
-    contributor_id=models.AutoField(primary_key=True)
+class  Contributor(models.Model):  # name and org 
+    contributor_id=models.AutoField(primary_key=True)    
     name=models.CharField(max_length=255,blank=False,null=False)
     credential=models.CharField(max_length=255,blank=False,null=False)
-    organization=models.CharField(max_length=255,blank=False,null=False)
+    organization=models.CharField(max_length=255,blank=False,null=False) 
     number_of_verifications=models.IntegerField(blank=True,null=True)
     number_of_contribution=models.IntegerField(blank=True,null=True)
 
     class Meta:
         db_table = 'contributor'
-       
+    
 
-class Datasource(models.Model):
+class Datasource(models.Model): #name
     data_sourceid=models.AutoField(primary_key=True)
     name=models.CharField(max_length=255,blank=False,null=False)
     description=models.TextField(blank=True)
@@ -24,7 +24,7 @@ class Datasource(models.Model):
         
 
 
-class GeographicalScope(models.Model):
+class GeographicalScope(models.Model): #all 
     geographical_scope_id=models.AutoField(primary_key=True)
     region =models.CharField( max_length=50,blank=False,null=False)
     contry=models.CharField(max_length=50,blank=True,null=True)
@@ -33,7 +33,7 @@ class GeographicalScope(models.Model):
     class Meta:
         db_table='geographicalscope'
 
-class Sector(models.Model):
+class Sector(models.Model): #name 
     sector_id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=250,blank=False,null=False)
     description=models.TextField(blank=False,null=False)
@@ -41,7 +41,7 @@ class Sector(models.Model):
     class Meta:
         db_table='sector'
 
-class EmissionCategory(models.Model):
+class EmissionCategory(models.Model): #category, subcategory
     emission_category_id=models.AutoField(primary_key=True)
     category=models.CharField( max_length=255,blank=False,null=False)
     sub_category=models.TextField(blank=True,null=True)
@@ -54,7 +54,7 @@ class EmissionCategory(models.Model):
 
 
 
-class EmissionFactor(models.Model):
+class EmissionFactor(models.Model): #product name , emssionQ units,pollutant , date recorded, date updated, eftier
     emission_factor_id=models.AutoField(primary_key=True)
     product_name=models.TextField( blank=True,null=True)
     additional_information=models.TextField(blank=True,null=True)

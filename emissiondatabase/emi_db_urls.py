@@ -1,7 +1,6 @@
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 from.views import ContributorViewSet,SectorViewSet,EmissionCategoryViewSet,EmissionFactorViewSet,GeographicalScopelViewSet,DataSourceViewSet,JunctionContributorEmissionfactorViewSet
-
 router=DefaultRouter()
 router.register(r'contributor',ContributorViewSet, basename='contributor')
 router.register(r'sector',SectorViewSet,basename='sector')
@@ -13,5 +12,6 @@ router.register(r'juncContribEmit',JunctionContributorEmissionfactorViewSet,base
 
 
 urlpatterns=[
-    path('',include(router.urls))
+    path('',include(router.urls)),
+    
 ]

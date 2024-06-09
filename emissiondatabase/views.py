@@ -1,19 +1,31 @@
-from django.shortcuts import render
-from rest_framework import viewsets,status,serializers
+
+from rest_framework import viewsets,status,serializers,filters
 from rest_framework.response import Response
 from .models import *
-from.serializer import *
-from rest_framework.exceptions import ValidationError
+from .serializer import *
+from rest_framework.decorators import action
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import ContributorFilter,GeographicalScopeFilter
+
+
+
+
 
 class ContributorViewSet(viewsets.ModelViewSet):
     queryset=Contributor.objects.all().order_by('contributor_id') #gets all the contributor entries from the database 
+    print(queryset.query)
     serializer_class=ContributorSerializer
+    filter_backends=[DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter]
+    filterset_class=ContributorFilter
+    search_fields=['name','organization']
+    ordering_fields=['number_of_verifications','number_of_contribution']
 
+    
     def list(self,request):
         try:
             # Getting the queryset for the viewset
             queryset=self.get_queryset()  #treturns he queryset defined in the viewset i.e [Contributor.objects.all()] i.e retrieve entire instance of the model
-           
+            
             #searilizing  the queryset into format suitable for jason output
             serializer =self.get_serializer(queryset,many=True)
             return Response({'status': 'contributor list success', 'data':serializer.data},
@@ -307,6 +319,10 @@ class DataSourceViewSet(viewsets.ModelViewSet):
 class GeographicalScopelViewSet(viewsets.ModelViewSet):
     queryset=GeographicalScope.objects.all().order_by('geographical_scope_id')
     serializer_class=GeographicalScopeSerializer
+    filter_backends=[DjangoFilterBackend,filters.SearchFilter]
+    filterset_class=GeographicalScopeFilter
+    search_fields=['region','country','city','district']
+
     def list(self,request):
         try:
             # Getting the queryset for the viewset
@@ -865,10 +881,43 @@ class EmissionFactorViewSet(viewsets.ModelViewSet):
                     'message':str(e)
                 }, status= status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+        
+    @action(methods=['post'],detail=False,url_name='bulk-upload-emission-factors',url_path='bulk-upload')
+    
+    def bulk_upload(self,request,*args,**kwargs):
+        try:
+            if not isinstance(request.data,list):
+                return Response({'error':'list is expected '},status=status.HTTP_400_BAD_REQUEST)
+            serializer=self.get_serializer(data=request.data, many=True)
+            serializer.is_valid(raise_exception=True)
+            emission_factors=[EmissionFactor(**item)for item in serializer.validated_data]
+            EmissionFactor.objects.bulk_create(emission_factors)
+            return Response({
+                'message':'emission created successfully',
+                'data':serializer.data
+            },status=status.HTTP_201_CREATED)
+        
+        except serializers.ValidationError as e:
+            return Response({
+                'status':'validation error',
+                'message':e.detail
+            },status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {
+                    'status':'bulk emission factor creation failed',
+                    'message':str(e)
+                }
+            )
+
+            
+        
 
 class JunctionContributorEmissionfactorViewSet(viewsets.ModelViewSet):
     queryset=JunctionContributorEmissionfactor.objects.all()
     serializer_class=JunctionContributorEmissionfactorSerializer
+    
+    
 
 
 
