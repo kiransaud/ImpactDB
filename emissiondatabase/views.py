@@ -9,8 +9,6 @@ from .filters import ContributorFilter,GeographicalScopeFilter
 
 
 
-
-
 class ContributorViewSet(viewsets.ModelViewSet):
     queryset=Contributor.objects.all().order_by('contributor_id') #gets all the contributor entries from the database 
     print(queryset.query)
@@ -909,9 +907,7 @@ class EmissionFactorViewSet(viewsets.ModelViewSet):
                     'message':str(e)
                 }
             )
-
-            
-        
+      
 
 class JunctionContributorEmissionfactorViewSet(viewsets.ModelViewSet):
     queryset=JunctionContributorEmissionfactor.objects.all()

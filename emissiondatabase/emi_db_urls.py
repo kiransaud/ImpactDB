@@ -13,5 +13,4 @@ router.register(r'juncContribEmit',JunctionContributorEmissionfactorViewSet,base
 
 urlpatterns=[
     path('',include(router.urls)),
-    
 ]
