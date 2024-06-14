@@ -25,7 +25,9 @@ SECRET_KEY = "django-insecure-2^&vwfc^9!92b*8t!r_*ffr@+7c#2cuk(_f72l91y@g^23$50(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "*",
+]
 
 
 # Application definition
@@ -37,16 +39,25 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "emissiondatabase.apps.EmissiondatabaseConfig",# new app
-    #DRF
-    "rest_framework", 
-    "django_filters", #filter
+    "emissiondatabase.apps.EmissiondatabaseConfig",  # new app
+    # DRF
+    "rest_framework",
+    "django_filters",  # filter
     "drf_yasg",
+    "corsheaders",  # corsheaders
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # cors middleware always define above commonMiddleware
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -73,7 +84,6 @@ TEMPLATES = [
 ]
 
 
-
 WSGI_APPLICATION = "impactOSDB.wsgi.application"
 
 
@@ -83,10 +93,10 @@ WSGI_APPLICATION = "impactOSDB.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME":"impactos",
+        "NAME": "impactos",
         "USER": "postgres",
-        "PASSWORD":"kiransaud11",
-        "HOST":"localhost",
+        "PASSWORD": "kiransaud11",
+        "HOST": "localhost",
         "PORT": "5432",
     }
 }
@@ -131,3 +141,14 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Allow all domains to access your API (for development purposes only)
+CORS_ALLOW_ALL_ORIGINS = True
+
+'''''
+ For production, you can use  a more restrictive setting
+ CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://your-frontend-domain.com",
+    
+'''''
