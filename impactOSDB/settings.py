@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-2^&vwfc^9!92b*8t!r_*ffr@+7c#2cuk(_f72l91y@g^23$50(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework", 
     "django_filters", #filter
     "drf_yasg",
+    "rest_framework.authtoken"
 ]
 
 MIDDLEWARE = [
@@ -81,13 +82,13 @@ WSGI_APPLICATION = "impactOSDB.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME":"impactos",
-        "USER": "postgres",
-        "PASSWORD":"kiransaud11",
-        "HOST":"localhost",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres', 
+        'USER': 'postgres',
+        'PASSWORD': 'Pr7B4&JuV&ND.Tx',
+        'HOST': 'database-1.c9q8s4ocuogq.us-east-1.rds.amazonaws.com', 
+        'PORT': '5432'#'8002',
     }
 }
 
@@ -131,3 +132,16 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CACHES = {
+     'default': {
+     'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+     'LOCATION': 'redis://127.0.0.1:6379',
+   }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # Add this line
+    ],
+}

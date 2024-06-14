@@ -7,8 +7,17 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import ContributorFilter,GeographicalScopeFilter
 
+from rest_framework.exceptions import ValidationError
+from django.core.cache import cache
 
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
+from .serializer import UserRegisterSerializer
+from .serializer import UserLoginSerializer
 
 
 class ContributorViewSet(viewsets.ModelViewSet):
@@ -23,13 +32,21 @@ class ContributorViewSet(viewsets.ModelViewSet):
     
     def list(self,request):
         try:
-            # Getting the queryset for the viewset
-            queryset=self.get_queryset()  #treturns he queryset defined in the viewset i.e [Contributor.objects.all()] i.e retrieve entire instance of the model
-            
-            #searilizing  the queryset into format suitable for jason output
-            serializer =self.get_serializer(queryset,many=True)
-            return Response({'status': 'contributor list success', 'data':serializer.data},
+            #response = cache.get('ContributorViewSet')
+
+            #if not response:
+                # Getting the queryset for the viewset
+                queryset=self.get_queryset()  #treturns he queryset defined in the viewset i.e [Contributor.objects.all()] i.e retrieve entire instance of the model
+           
+                #searilizing  the queryset into format suitable for jason output
+                serializer =self.get_serializer(queryset,many=True)
+                response = Response({'status': 'contributor list success', 'data':serializer.data},
                              status=status.HTTP_200_OK)
+                #cache.set('ContributorViewSet', serializer.data)
+                return response
+
+            #return Response({'status': 'contributor list success', 'data':response},
+             #                status=status.HTTP_200_OK)
         
         except Exception as e:
             return Response({'status':'list failed','message': str(e)},
@@ -62,6 +79,11 @@ class ContributorViewSet(viewsets.ModelViewSet):
             #validate the data and raise exception if it is not valid 
             serializer.is_valid(raise_exception=True) 
             self.perform_create(serializer) # save the validate data 
+
+            #queryset=self.get_queryset() 
+            #cacheSerializer=self.get_serializer(queryset,many=True)
+            #cache.set('ContributorViewSet', cacheSerializer.data)
+
             return Response({
                 'message':'Contributor created successfully',
                 'data':serializer.data
@@ -87,6 +109,11 @@ class ContributorViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)  
             # Save the valid data using perform_update
             self.perform_update(serializer)
+
+            #queryset=self.get_queryset() 
+            #cacheSerializer=self.get_serializer(queryset,many=True)
+            #cache.set('ContributorViewSet', cacheSerializer.data)
+
             return Response({'message': 'contriutor updated successfully','data':serializer.data},
                             status=status.HTTP_200_OK)
         
@@ -113,6 +140,11 @@ class ContributorViewSet(viewsets.ModelViewSet):
             serializer=self.get_serializer(instance,data=request.data,partial=True)
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
+
+            #queryset=self.get_queryset() 
+            #cacheSerializer=self.get_serializer(queryset,many=True)
+            #cache.set('ContributorViewSet', cacheSerializer.data)
+
             return (
                 Response(
                     {
@@ -140,6 +172,11 @@ class ContributorViewSet(viewsets.ModelViewSet):
         try:
             instance =self.get_object()
             self.perform_destroy(instance)
+
+            #queryset=self.get_queryset() 
+            #cacheSerializer=self.get_serializer(queryset,many=True)
+            #cache.set('ContributorViewSet', cacheSerializer.data)
+
             return(Response({
 
                 'status':'contributor deleted successfully'
@@ -920,8 +957,81 @@ class JunctionContributorEmissionfactorViewSet(viewsets.ModelViewSet):
     
 
 
+class UserLoginAPIView(APIView):
+    def post(self, request, *args, **kargs):
+        serializer = UserLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            response = {
+                "username": {
+                    "detail": "User Doesnot exist!"
+                }
+            }
+            if User.objects.filter(username=request.data['username']).exists():
+                user = User.objects.get(username=request.data['username'])
+                token, created = Token.objects.get_or_create(user=user)
+                response = {
+                    'success': True,
+                    'username': user.username,
+                    'email': user.email,
+                    'token': token.key
+                }
+                return Response(response, status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserRegisterAPIView(APIView):
+    def post(self, request, *args, **kargs):
+        serializer = UserRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            response = {
+                'success': True,
+                'user': serializer.data,
+                'token': Token.objects.get(user=User.objects.get(username=serializer.data['username'])).key
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        raise ValidationError(
+            serializer.errors, code=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+class UserLogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args):
+        token = Token.objects.get(user=request.user)
+        token.delete()
+        return Response({"success": True, "detail": "Logged out!"}, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    
+
+
+
+        
+
+
+
+
+
+
+
+        
 
 
 
