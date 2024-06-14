@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import EmissionCategory,EmissionFactor,JunctionContributorEmissionfactor,Sector,GeographicalScope,Contributor,Datasource
+from .models import (
+    EmissionCategory,
+    EmissionFactor,
+    JunctionContributorEmissionfactor,
+    Sector,
+    GeographicalScope,
+    Contributor,
+    Datasource,
+)
 
 admin.site.register(EmissionCategory)
 # admin.site.register(EmissionFactor)

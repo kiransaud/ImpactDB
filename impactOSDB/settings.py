@@ -37,17 +37,29 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "emissiondatabase.apps.EmissiondatabaseConfig",# new app
-    #DRF
-    "rest_framework", 
-    "django_filters", #filter
+    "emissiondatabase.apps.EmissiondatabaseConfig",  # new app
+    # DRF
+    "rest_framework",
+    "django_filters",  # filter
     "drf_yasg",
     "rest_framework.authtoken"
+    "corsheaders",  # corsheaders
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  
+    ],
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # cors middleware always define above commonMiddleware
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -72,7 +84,6 @@ TEMPLATES = [
         },
     },
 ]
-
 
 
 WSGI_APPLICATION = "impactOSDB.wsgi.application"
@@ -133,6 +144,16 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Allow all domains to access your API (for development purposes only)
+CORS_ALLOW_ALL_ORIGINS = True
+
+'''''
+ For production, you can use  a more restrictive setting
+ CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://your-frontend-domain.com",
+    
+'''''
 CACHES = {
      'default': {
      'BACKEND': 'django.core.cache.backends.redis.RedisCache',
@@ -140,8 +161,3 @@ CACHES = {
    }
 }
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',  # Add this line
-    ],
-}
