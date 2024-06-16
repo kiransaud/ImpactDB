@@ -2,11 +2,10 @@ from rest_framework import viewsets, status, serializers
 from rest_framework.response import Response
 from .models import *
 from .serializer import *
-from rest_framework.decorators import action
-from django_filters.rest_framework import DjangoFilterBackend
-from .filters import ContributorFilter,GeographicalScopeFilter
+from rest_framework.decorators import action, api_view
 
-from rest_framework.exceptions import ValidationError, api_view
+
+from rest_framework.exceptions import ValidationError
 from django.core.cache import cache
 
 from django.contrib.auth.models import User

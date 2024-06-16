@@ -16,7 +16,7 @@ class Contributor(models.Model):  # name and org
 class Datasource(models.Model):  # name
     data_sourceid = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, blank=False, null=False)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
     reference_link = models.URLField(max_length=255, blank=True, null=True)
     contributors = models.ManyToManyField(Contributor, related_name="datasource")
 
@@ -26,11 +26,12 @@ class Datasource(models.Model):  # name
 
 class GeographicalScope(models.Model):  # all
     geographical_scope_id = models.AutoField(primary_key=True)
-    region = models.CharField(max_length=50, blank=False, null=False)
-    contry = models.CharField(max_length=50, blank=True, null=True)
+    region = models.CharField(max_length=50, blank=False, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(
         max_length=50,
         blank=True,
+        null=True
     )
     district = models.CharField(max_length=50, blank=True, null=True)
 
@@ -65,14 +66,14 @@ class EmissionFactor(
 ):  # product name , emssionQ units,pollutant , date recorded, date updated, eftier
     emission_factor_id = models.AutoField(primary_key=True)
     product_name = models.TextField(blank=True, null=True)
-    additional_information = models.TextField(blank=True, null=True)
     emission_quantity = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
     emission_quantity_units = models.CharField(max_length=50, blank=True, null=True)
     pollutant = models.CharField(max_length=50, blank=False, null=False)
     co2_or_co2_equivalent = models.CharField(max_length=50, blank=True, null=True)
+    additional_information = models.TextField(blank=True, null=True)
     technical_refrence = models.TextField(blank=True, null=True)
-    date_recorded = models.DateField(auto_now_add=True, blank=True, null=True)
-    date_updated = models.DateField(auto_now=True, blank=True, null=True)
+    date_recorded_year = models.IntegerField(blank=True, null=True)
+    date_updated_year = models.IntegerField(blank=True, null=True)
     reliability_factor = models.DecimalField(
         max_digits=16, decimal_places=2, blank=True, null=True
     )

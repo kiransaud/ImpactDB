@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",  # filter
     "drf_yasg",
-    "rest_framework.authtoken"
+    "rest_framework.authtoken",
     "corsheaders",  # corsheaders
 ]
 
@@ -98,7 +98,7 @@ DATABASES = {
         'NAME': 'postgres', 
         'USER': 'postgres',
         'PASSWORD': 'Pr7B4&JuV&ND.Tx',
-        'HOST': 'database-1.c9q8s4ocuogq.us-east-1.rds.amazonaws.com', 
+        'HOST': 'database-1.c9q8s4ocuogq.us-east-1.rds.amazonaws.com' #127.0.0.1', 
         'PORT': '5432'#'8002',
     }
 }

@@ -45,7 +45,7 @@ class SectorSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, data):
-        if data["date_recorded"] > data["date_updated"]:
+        if data["date_recorded_year"] > data["date_updated_year"]:
             raise serializers.ValidationError(
                 "date updated must be after recorded date "
             )
